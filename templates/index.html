@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Music Detector</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI', sans-serif;
+}
+
+body{
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    gap:30px;
+    background:linear-gradient(135deg,#0b1220,#1e3a8a);
+    overflow:hidden;
+}
+
+body::before{
+    content:"";
+    position:absolute;
+    width:200%;
+    height:200%;
+    background:
+        radial-gradient(circle at 30% 70%, #00ffd522, transparent 60%),
+        radial-gradient(circle at 70% 30%, #ff6ec422, transparent 60%);
+    animation:wave 14s linear infinite;
+}
+@keyframes wave{
+    100%{transform:translateX(-25%)}
+}
+
+.header{
+    padding:20px 60px;
+    border-radius:25px;
+    background:rgba(20,30,60,0.6);
+    backdrop-filter:blur(25px);
+    border:1px solid rgba(255,255,255,0.2);
+    box-shadow:0 20px 60px rgba(0,0,0,1);
+}
+
+.header h1{
+    font-size:28px;
+    background:linear-gradient(45deg,#ff6ec4,#7873f5,#00ffd5);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+.container{
+    width:360px;
+    padding:30px;
+    border-radius:25px;
+    background:rgba(20,30,60,0.65);
+    backdrop-filter:blur(25px);
+    border:1px solid rgba(255,255,255,0.2);
+    box-shadow:0 40px 120px rgba(0,0,0,1);
+    text-align:center;
+}
+
+.drop-area{
+    padding:30px;
+    border-radius:20px;
+    border:2px dashed rgba(255,255,255,0.5);
+    background:rgba(255,255,255,0.03);
+    cursor:pointer;
+}
+.icon{
+    font-size:30px;
+}
+
+.title{margin-top:10px;color:#fff;}
+.subtitle{font-size:12px;color:#aaa;}
+.file-name{margin-top:10px;color:#ccc;font-size:13px;}
+
+audio{
+    width:100%;
+    margin-top:10px;
+}
+
+.progress{
+    height:6px;
+    background:#ffffff22;
+    border-radius:10px;
+    margin-top:12px;
+}
+.progress-bar{
+    height:100%;
+    width:0%;
+    background:linear-gradient(45deg,#ff6ec4,#00ffd5);
+    transition:width 2s ease;
+}
+
+button{
+    margin-top:15px;
+    padding:12px 28px;
+    border:none;
+    border-radius:12px;
+    background:linear-gradient(45deg,#ff6ec4,#7873f5);
+    color:white;
+    cursor:pointer;
+}
+
+.result{
+    margin-top:15px;
+    color:#00ffd5;
+    font-size:20px;
+    font-weight:bold;
+}
+
+.loader{
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,0.85);
+    display:none;
+    justify-content:center;
+    align-items:center;
+}
+.spinner{
+    width:50px;
+    height:50px;
+    border:4px solid #fff2;
+    border-top:4px solid #00ffd5;
+    border-radius:50%;
+    animation:spin 1s linear infinite;
+}
+@keyframes spin{
+    100%{transform:rotate(360deg)}
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+<h1>🎧 AI Music Detector</h1>
+</div>
+
+<div class="container">
+
+<!-- ✅ IMPORTANT FORM FIX -->
+<form method="POST" enctype="multipart/form-data">
+
+<div class="drop-area" onclick="document.getElementById('fileInput').click()">
+<input type="file" name="file" id="fileInput" hidden>
+<div class="icon">🎵</div>
+<div class="title">Drag & Drop Audio</div>
+<div class="subtitle">or click to upload</div>
+</div>
+
+<div id="fileName" class="file-name">No file selected</div>
+
+<audio id="audioPlayer" controls style="display:none;"></audio>
+
+<div class="progress">
+<div class="progress-bar" id="progressBar"></div>
+</div>
+
+<button type="submit">🚀 Detect</button>
+
+</form>
+
+<!-- ✅ RESULT FIX -->
+{% if result %}
+<div class="result">{{ result }}</div>
+{% endif %}
+
+</div>
+
+<div class="loader" id="loader">
+<div class="spinner"></div>
+</div>
+
+<script>
+const fileInput = document.getElementById("fileInput");
+const fileName = document.getElementById("fileName");
+const audioPlayer = document.getElementById("audioPlayer");
+const progressBar = document.getElementById("progressBar");
+
+fileInput.onchange = () => {
+    const file = fileInput.files[0];
+    if(!file) return;
+
+    fileName.innerText = file.name;
+
+    audioPlayer.src = URL.createObjectURL(file);
+    audioPlayer.style.display = "block";
+
+    progressBar.style.width = "0%";
+    setTimeout(()=>{progressBar.style.width="100%"},100);
+};
+</script>
+
+</body>
+</html>
